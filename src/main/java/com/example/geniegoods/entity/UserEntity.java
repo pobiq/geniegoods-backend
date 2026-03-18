@@ -1,6 +1,5 @@
 package com.example.geniegoods.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
@@ -10,7 +9,9 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -63,26 +64,6 @@ public class UserEntity implements UserDetails {
     @Column(nullable = false, columnDefinition = "VARCHAR(50) DEFAULT 'FREE'")
     @Builder.Default
     private String subscriptionPlan = "FREE";
-
-    @JsonIgnore
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    @Builder.Default
-    private List<UploadImgEntity> uploadImgList = new ArrayList<>();
-
-    @JsonIgnore
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    @Builder.Default
-    private List<GoodsEntity> goodsList = new ArrayList<>();
-
-    @JsonIgnore
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    @Builder.Default
-    private List<GoodsViewEntity> goodsViewList = new ArrayList<>();
-
-    @JsonIgnore
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    @Builder.Default
-    private List<OrderEntity> orderList = new ArrayList<>();
 
     /**
      * 사용자 권한 반환

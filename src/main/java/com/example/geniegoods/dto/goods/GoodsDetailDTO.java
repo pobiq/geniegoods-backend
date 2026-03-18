@@ -49,7 +49,7 @@ public class GoodsDetailDTO {
         return GoodsDetailDTO.builder()
                 .goodsId(goods.getGoodsId())
                 .categoryKoreanName(goods.getGoodsCategoryEntity().getKoreanName())
-                .viewCount(goods.getGoodsViewList() != null ? goods.getGoodsViewList().size() : 0)
+                .viewCount(0)
                 .creatorNickname(goods.getUser().getNickname())
                 .createdAt(goods.getCreatedAt())
                 .goodsStyle(goods.getGoodsStyle() != null ? goods.getGoodsStyle().getKoreanName() : null)

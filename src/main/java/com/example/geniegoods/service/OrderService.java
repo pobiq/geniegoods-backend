@@ -130,24 +130,8 @@ public class OrderService {
 
     /* 5. 공통 DTO 변환 */
     private OrderResponseDTO convertToResponseDto(OrderEntity order) {
-        int subtotal = order.getOrderItems().stream()
-                .mapToInt(item -> item.getPriceAtOrder() * item.getQuantity())
-                .sum();
 
-        List<OrderResponseDTO.OrderItemResponseDto> items = order.getOrderItems().stream()
-                .map(item -> OrderResponseDTO.OrderItemResponseDto.builder()
-                        .orderItemId(item.getOrderItemId())
-                        .goodsId(item.getGoods().getGoodsId())
-                        .goodsUrl(item.getGoods().getGoodsUrl())
-                        .goodsStyle(item.getGoods().getGoodsStyle() != null ? item.getGoods().getGoodsStyle().name() : null)
-                        .goodsTone(item.getGoods().getGoodsTone() != null ? item.getGoods().getGoodsTone().name() : null)
-                        .goodsMood(item.getGoods().getGoodsMood() != null ? item.getGoods().getGoodsMood().name() : null)
-                        .categoryKoreanName(item.getGoods().getGoodsCategoryEntity().getKoreanName())
-                        .quantity(item.getQuantity())
-                        .priceAtOrder(item.getPriceAtOrder())
-                        .itemTotal(item.getPriceAtOrder() * item.getQuantity())
-                        .build())
-                .toList();
+        List<OrderResponseDTO.OrderItemResponseDto> items = new ArrayList<>();
 
         return OrderResponseDTO.builder()
                 .orderId(order.getOrderId())
@@ -158,7 +142,7 @@ public class OrderService {
                 .zipcode(order.getZipcode())
                 .address(order.getAddress())
                 .detailAddress(order.getDetailAddress())
-                .subtotal(subtotal)
+                .subtotal(0)
                 .shippingFee(SHIPPING_FEE)
                 .items(items)
                 .build();
