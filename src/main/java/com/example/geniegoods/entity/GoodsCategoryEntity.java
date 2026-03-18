@@ -3,9 +3,6 @@ package com.example.geniegoods.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Entity
 @Getter
 @Setter
@@ -25,9 +22,5 @@ public class GoodsCategoryEntity {
 
     @Column(name = "PRICE")
     private Integer price;  // int로 맞춤
-
-    @OneToMany(mappedBy = "goodsCategoryEntity", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    @Builder.Default
-    private List<GoodsEntity> goodsList = new ArrayList<>();
 
 }

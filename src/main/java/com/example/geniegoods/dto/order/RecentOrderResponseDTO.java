@@ -1,12 +1,10 @@
 package com.example.geniegoods.dto.order;
 
 import com.example.geniegoods.entity.OrderEntity;
-import com.example.geniegoods.entity.OrderItemEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
 import java.time.format.DateTimeFormatter;
-import java.util.List;
 
 @Getter
 @Setter
@@ -34,20 +32,14 @@ public class RecentOrderResponseDTO {
 
     public static RecentOrderResponseDTO of(OrderEntity order) {
 
-        List<OrderItemEntity> orderItemList = order.getOrderItems();
-        String orderTitle = orderItemList.getFirst().getGoods().getGoodsCategoryEntity().getKoreanName();
-
-        if(orderItemList.size() >= 2) {
-            orderTitle += " 외" + orderItemList.size();
-        }
         String orderedAt = order.getOrderedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
 
         return RecentOrderResponseDTO.builder()
                 .orderId(order.getOrderId())
                 .orderNumber(order.getOrderNumber())
                 .orderedAt(orderedAt)
-                .orderTitle(orderTitle)
-                .goodsUrl(order.getOrderItems().getFirst().getGoods().getGoodsUrl())
+                .orderTitle("테스트")
+                .goodsUrl(null)
                 .build();
     }
 
