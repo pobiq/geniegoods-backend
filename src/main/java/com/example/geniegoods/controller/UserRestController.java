@@ -5,7 +5,7 @@ import com.example.geniegoods.dto.user.*;
 import com.example.geniegoods.entity.UserEntity;
 import com.example.geniegoods.repository.UserRepository;
 import com.example.geniegoods.security.JwtUtil;
-import com.example.geniegoods.service.ObjectStorageService;
+import com.example.geniegoods.service.LocalStorageService;
 import com.example.geniegoods.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -30,7 +30,7 @@ import java.util.Map;
 public class UserRestController {
 
     private final UserService userService;
-    private final ObjectStorageService objectStorageService;
+    private final LocalStorageService localStorageService;
     private final JwtUtil jwtUtil;
     private final UserRepository userRepository;
 

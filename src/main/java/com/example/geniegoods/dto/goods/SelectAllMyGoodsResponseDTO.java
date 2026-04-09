@@ -23,7 +23,7 @@ public class SelectAllMyGoodsResponseDTO {
         return SelectAllMyGoodsResponseDTO.builder()
             .goodsId(goodsEntity.getGoodsId())
             .goodsUrl(goodsEntity.getGoodsUrl())
-            .price(goodsEntity.getGoodsCategoryEntity().getPrice())
+            .price(goodsEntity.getGoodsCategoryEntity() != null ? goodsEntity.getGoodsCategoryEntity().getPrice() : 0)
             .build();
     }
 }

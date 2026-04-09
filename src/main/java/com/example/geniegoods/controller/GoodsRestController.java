@@ -5,7 +5,7 @@ import com.example.geniegoods.dto.common.CommonResponseDTO;
 import com.example.geniegoods.dto.goods.*;
 import com.example.geniegoods.entity.UserEntity;
 import com.example.geniegoods.service.GoodsService;
-import com.example.geniegoods.service.ObjectStorageService;
+import com.example.geniegoods.service.LocalStorageService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -28,7 +28,7 @@ public class GoodsRestController {
 
     private final GoodsService goodsService;
 
-    private final ObjectStorageService objectStorageService;
+    private final LocalStorageService localStorageService;
 
     @DeleteMapping("/bulk")
     @Operation(summary = "선택된 굿즈 일괄 삭제", description = "선택된 굿즈 일괄 삭제")
@@ -65,7 +65,7 @@ public class GoodsRestController {
         return ResponseEntity.ok(goodsService.createGoodsSample(user, dto));
     }
 
-    @Operation(summary = "굿즈 선택에서 뒤로가기", description = "뒤로가기시 ObjectStorage에 있는 sample 폴더 이미지 삭제")
+    @Operation(summary = "굿즈 선택에서 뒤로가기", description = "뒤로가기시 LocalStorage에 있는 sample 폴더 이미지 삭제")
     @PostMapping("/delete-goods-sample")
     public ResponseEntity<DeleteGoodsSampleResponseDTO> deleteSampleImg(
             @AuthenticationPrincipal UserEntity user,

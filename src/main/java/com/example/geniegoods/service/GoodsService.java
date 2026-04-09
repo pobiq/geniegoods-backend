@@ -36,7 +36,7 @@ public class GoodsService {
     private final GoodsViewRepository goodsViewRepository;
     private final YoloService yoloService;
     private final NanoService nanoService;
-    private final ObjectStorageService objectStorageService;
+    private final LocalStorageService localStorageService;
 
     /**
      * 내가 생성한 굿즈 -> 삭제
@@ -100,7 +100,7 @@ public class GoodsService {
         byte[] goodsImgFileByte;
 
         try {
-            goodsImgFileByte = objectStorageService.downloadImage(dto.getGoodsImgUrl());
+            goodsImgFileByte = localStorageService.downloadImage(dto.getGoodsImgUrl());
         } catch (IOException e) {
             log.error("이미지 다운로드 실패: {}", e.getMessage());
             throw new RuntimeException("이미지 다운로드 실패: " + e.getMessage());
@@ -110,24 +110,24 @@ public class GoodsService {
 
         String goodsImgUrl = "";
 
-        // 시안 선택한 이미지 url ObjectStorage에 저장
+        // 시안 선택한 이미지 url LocalStorage에 저장
         try {
-            goodsImgUrl = objectStorageService.uploadFile(goodsImgFile, user.getUserId(),
+            goodsImgUrl = localStorageService.uploadFile(goodsImgFile, user.getUserId(),
                     "goods" + "/" + user.getUserId() + "/" + dto.getUploadImgGroupId()
             );
         } catch (IOException e) {
-            log.error("선택한 이미지 ObjectStorage 저장 실패: {}", e.getMessage());
-            throw new RuntimeException("선택한 이미지 ObjectStorage 저장 실패: " + e.getMessage());
+            log.error("선택한 이미지 LocalStorage 저장 실패: {}", e.getMessage());
+            throw new RuntimeException("선택한 이미지 LocalStorage 저장 실패: " + e.getMessage());
         }
 
         // 결과 이미지 Object Storage 삭제
-        objectStorageService.deleteImage(dto.getResultImageUrl());
+        localStorageService.deleteImage(dto.getResultImageUrl());
 
         // 시안 3개 이미지 Object Storage 삭제
         List<String> sampleGoodsImageUrls = dto.getSampleGoodsImageUrl();
 
         for (String url : sampleGoodsImageUrls) {
-            objectStorageService.deleteImage(url);
+            localStorageService.deleteImage(url);
         }
 
         SelectGoodsResponseDTO response = new SelectGoodsResponseDTO();
@@ -181,7 +181,7 @@ public class GoodsService {
 
         // 이미지 삭제
         for (String url : request.getGoodsSampleImgUrl()) {
-            objectStorageService.deleteImage(url);
+            localStorageService.deleteImage(url);
         }
 
         return DeleteGoodsSampleResponseDTO.builder()
@@ -194,6 +194,7 @@ public class GoodsService {
      * @param user
      * @return
      */
+    @Transactional(readOnly = true)
     public List<SelectAllMyGoodsResponseDTO> selectAllMyGoods(UserEntity user) {
         List<GoodsEntity> goodsEntityList = goodsRepository.findByUserAndIsPublicOrderByCreatedAtDesc(user, true);
 
@@ -275,7 +276,7 @@ public class GoodsService {
         if (dto.getPrevUploadImgGroupId() != null) {
             List<UploadImgEntity> uploadImg = uploadImgRepository.findByUploadImgGroup(uploadImgGroup);
             for (UploadImgEntity uploadImgEntity : uploadImg) {
-                objectStorageService.deleteImage(uploadImgEntity.getUploadImgUrl());
+                localStorageService.deleteImage(uploadImgEntity.getUploadImgUrl());
             }
         }
 
@@ -283,7 +284,7 @@ public class GoodsService {
         if (dto.getUploadImages() != null) {
             for (MultipartFile file : dto.getUploadImages()) {
                 try {
-                    uploadImgUrlList.add(objectStorageService.uploadFile(file, user.getUserId(),
+                    uploadImgUrlList.add(localStorageService.uploadFile(file, user.getUserId(),
                             "upload" + "/" + user.getUserId() + "/" + uploadImgGroup.getUploadGroupId()));
                 } catch (IOException e) {
                     log.error("업로드 이미지 Object Storage 저장 실패", e);
@@ -322,13 +323,13 @@ public class GoodsService {
 
         // 굿즈 이미지 이미 Object Storage에 저장되어있으면 삭제
         if(dto.getPrevGoodsImageUrl() != null) {
-            objectStorageService.deleteImage(dto.getPrevGoodsImageUrl());
+            localStorageService.deleteImage(dto.getPrevGoodsImageUrl());
         }
 
         // 굿즈 이미지 파일 Object Storage 저장
         String goodsImgUrl;
         try {
-            goodsImgUrl = objectStorageService.uploadFile(goodsImgFile, user.getUserId(), 
+            goodsImgUrl = localStorageService.uploadFile(goodsImgFile, user.getUserId(), 
                     "temp" + "/" + user.getUserId() + "/" + uploadImgGroup.getUploadGroupId());
         } catch (IOException e) {
             log.error("굿즈 이미지 Object Storage 저장 실패", e);
@@ -352,7 +353,7 @@ public class GoodsService {
         // 이미지 다운로드
         byte[] resultGoodsImageFileByte;
         try {
-            resultGoodsImageFileByte = objectStorageService.downloadImage(dto.getResultImageUrl());
+            resultGoodsImageFileByte = localStorageService.downloadImage(dto.getResultImageUrl());
         } catch (IOException e) {
             log.error("이미지 다운로드 실패: {}", e.getMessage());
             throw new RuntimeException("이미지 다운로드 실패: " + e.getMessage());
@@ -373,7 +374,7 @@ public class GoodsService {
 
         // 기존 이미지 업로드
         try {
-            String sampleImgUrl = objectStorageService.uploadFile(resultGoodsImageFile, user.getUserId(), folderPath);
+            String sampleImgUrl = localStorageService.uploadFile(resultGoodsImageFile, user.getUserId(), folderPath);
             sampleImgUrls.add(sampleImgUrl);
         } catch (IOException e) {
             log.error("시안 생성 실패: {}", e.getMessage(), e);
@@ -383,7 +384,7 @@ public class GoodsService {
         // 생성된 시안 이미지들 업로드
         for (MultipartFile multipartFile : sampleGoodsImages) {
             try {
-                String sampleImgUrl = objectStorageService.uploadFile(multipartFile, user.getUserId(), folderPath);
+                String sampleImgUrl = localStorageService.uploadFile(multipartFile, user.getUserId(), folderPath);
                 sampleImgUrls.add(sampleImgUrl);
             } catch (IOException e) {
                 log.error("시안 생성 실패: {}", e.getMessage(), e);
@@ -404,7 +405,7 @@ public class GoodsService {
      */
     public ResponseEntity<byte[]> downloadImage(String imageUrl) {
         try {
-            byte[] imageBytes = objectStorageService.downloadImage(imageUrl);
+            byte[] imageBytes = localStorageService.downloadImage(imageUrl);
             
             // Content-Type 설정 (이미지 타입 추출)
             String contentType = "image/jpeg"; // 기본값
@@ -447,7 +448,7 @@ public class GoodsService {
             for (int i = 0; i < imageUrls.size(); i++) {
                 String imageUrl = imageUrls.get(i);
                 try {
-                    byte[] imageBytes = objectStorageService.downloadImage(imageUrl);
+                    byte[] imageBytes = localStorageService.downloadImage(imageUrl);
 
                     // 파일명 추출
                     String fileName = imageUrl.substring(imageUrl.lastIndexOf("/") + 1);

@@ -41,7 +41,7 @@ public class GoodsEntity {
     private GoodsMood goodsMood;
 
     @CreatedDate
-    @Column(name = "CREATED_AT")
+    @Column(name = "CREATED_AT", nullable = false)
     private LocalDateTime createdAt;
 
     @Column(name = "GOODS_IMG_SIZE")

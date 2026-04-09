@@ -88,7 +88,3 @@ Thumbs.db
 **/truststore.jks
 *.p12
 *.pem
-
-## md 파일
-TODO.md
-REVIEW.md

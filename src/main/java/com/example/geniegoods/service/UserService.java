@@ -29,7 +29,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final GoodsRepository goodsRepository;  // 굿즈 비공개 처리용
     private final SubScribeRepository subScribeRepository;
-    private final ObjectStorageService objectStorageService;
+    private final LocalStorageService localStorageService;
     private final JwtUtil jwtUtil;
 
     private static final int REJOIN_BLOCK_DAYS = 30;  // 재가입 제한 기간
@@ -89,11 +89,11 @@ public class UserService {
 
             // 기존 프로필 이미지가 있으면 삭제
             if (user.getProfileUrl() != null && !user.getProfileUrl().isEmpty()) {
-                objectStorageService.deleteImage(user.getProfileUrl());
+                localStorageService.deleteImage(user.getProfileUrl());
             }
 
             // 새로운 프로필 이미지 업로드
-            String imageUrl = objectStorageService.uploadFile(file, user.getUserId(), "profile");
+            String imageUrl = localStorageService.uploadFile(file, user.getUserId(), "profile");
 
             // 프로필 이미지 업데이트
             user.setProfileUrl(imageUrl);
