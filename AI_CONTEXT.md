@@ -51,7 +51,6 @@ GenieGoods 서비스의 백엔드는 사용자 인증, 주문 처리, AI 모델 
 ## 📝 작업 방식
 
 - TODO.md → 구현할 기능 정의
-- README.md → API 및 구조 정리
 - REVIEW.md → 코드 검증 및 보완 기록
 
 ---
